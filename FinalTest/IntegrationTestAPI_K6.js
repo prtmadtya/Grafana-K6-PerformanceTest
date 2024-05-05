@@ -3,38 +3,39 @@ import { check, sleep } from 'k6';
 
 export default function () {
     //method Post create data
-    const createData = JSON.stringify({
+    const createData = {
             "name": "morpheus",
             "job": "leader"
-       });
-       const params = {
-       headers: {
-       'Content-Type': 'application/json'
-       },
-       };
-    const response = http.post('https://reqres.in/api/users', createData, params);
-    const checkOutput_1 = check(
-    response,
-    {
-        'verify success response of post': (response) => response.status == 201,
+       } 
+    const response = http.post('https://reqres.in/api/users', JSON.stringify(createData), {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept'        : 'application/json',
+            }
+    });
+    const responseCreate = check (response, {
+        'Response status must be 201': (response) => response.status == 201,
         'verify success insert name : morpheus': (response )=> response.body.includes('morpheus'),
-        'verify success insert job : leader': (response) => response.body.includes('leader'),
+        'verify success insert job  : leader': (response) => response.body.includes('leader'),
        },
-      );
+    );
+    sleep(1);
 
     // method put
-    const payload_2 = JSON.stringify({        
+    const updateData = {        
         "name": "Alexander",
         "job": "zion resident"    
+    };
+    const responseUpdate = http.put('https://reqres.in/api/users/2', JSON.stringify(updateData), {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept'        : 'application/json',
+            }
     });
-    const res_2 = http.put('https://reqres.in/api/users/2', payload_2, params);
-    const checkOutput_2 = check(
-    res_2,
-    {
-     'verify success response of put': (res_2) => res_2.status == 200,
-     'verify success update name : Alexander' : (res_2) => res_2.body.includes('Alexander'),
-     'verify success update job : zion resident': (res_2) => res_2.body.includes('zion resident'),
-    },
-    );
+    const response2 = check(responseUpdate, {
+     'Response status must be 200': (responseUpdate) => responseUpdate.status == 200,
+     'verify success update name : Alexander' : (responseUpdate) => responseUpdate.body.includes('Alexander'),
+     'verify success update job  : zion resident': (responseUpdate) => responseUpdate.body.includes('zion resident'),
+    });
     sleep(1); 
 }
