@@ -1,9 +1,9 @@
 import http from 'k6/http';
-import { check } from 'k6';
+import { check, sleep } from 'k6';
 
 export default function () {
     //method Post create data
-    const payload_1 = JSON.stringify({
+    const createData = JSON.stringify({
             "name": "morpheus",
             "job": "leader"
        });
@@ -12,13 +12,13 @@ export default function () {
        'Content-Type': 'application/json'
        },
        };
-    const res_1 = http.post('https://reqres.in/api/users', payload_1, params);
+    const response = http.post('https://reqres.in/api/users', createData, params);
     const checkOutput_1 = check(
-    res_1,
+    response,
     {
-        'verify success response of post': (res_1) => res_1.status == 201,
-        'verify success insert name : morpheus': (res_1 )=> res_1.body.includes('morpheus'),
-        'verify success insert job : leader': (res_1) => res_1.body.includes('leader'),
+        'verify success response of post': (response) => response.status == 201,
+        'verify success insert name : morpheus': (response )=> response.body.includes('morpheus'),
+        'verify success insert job : leader': (response) => response.body.includes('leader'),
        },
       );
 
@@ -35,5 +35,6 @@ export default function () {
      'verify success update name : Alexander' : (res_2) => res_2.body.includes('Alexander'),
      'verify success update job : zion resident': (res_2) => res_2.body.includes('zion resident'),
     },
-    ); 
+    );
+    sleep(1); 
 }

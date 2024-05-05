@@ -11,6 +11,7 @@ export const options = {
 
 export default function () {
   const res = http.get('https://opensource-demo.orangehrmlive.com');
-  check(res, { 'status was 200': (r) => r.status == 200 });
+  check(res, 
+    { 'status was 200': (r) => r.status == 200 });
   sleep(1);
 }
