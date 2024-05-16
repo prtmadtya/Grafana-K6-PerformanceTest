@@ -1,41 +1,118 @@
 import http from 'k6/http';
-import { check, sleep } from 'k6';
+import { check, sleep, group } from 'k6';
+const BASE_URL = 'https://reqres.in';
 
 export default function () {
-    //method Post create data
-    const createData = {
-            "name": "morpheus",
-            "job": "leader"
-       } 
-    const response = http.post('https://reqres.in/api/users', JSON.stringify(createData), {
-        headers: {
+    const name = 'morpheus'
+    const job = 'zion resident'
+    group('Create with valid request should success', function () {
+      const FULL_URL = BASE_URL + '/api/users';
+      const payload = JSON.stringify({
+          name : name,
+          job: job
+        })
+        const params = {
+          headers: {
             'Content-Type': 'application/json',
-            'Accept'        : 'application/json',
-            }
+          },
+        };
+      
+      let res = http.post(FULL_URL, payload, params);
+    
+        check(res, {
+            'verify response status code must be 201': (res) => res.status == 201,
+        });
+        check(res, {
+          'response name = request': (res) => {
+              let response;
+              try {
+                  response = JSON.parse(res.body);
+              } catch (e) {
+                  console.error('Failed to parse response body:', e);
+                  return false;
+              }
+    
+              if (response && response.name) {
+                  return response.name === name;
+              } else {
+                  console.error('Response or response name is undefined');
+                  return false;
+              }
+          },
+        });
+        check(res, {
+          'Verify response job = request': (res) => {
+              let response;
+              try {
+                  response = JSON.parse(res.body);
+              } catch (e) {
+                  console.error('Failed to parse response body:', e);
+                  return false;
+              }
+    
+              if (response && response.job) {
+                  return response.job === job;
+              } else {
+                  console.error('Response or response job is undefined');
+                  return false;
+              }
+          },
+        });
     });
-    const responseCreate = check (response, {
-        'Response status must be 201': (response) => response.status == 201,
-        'verify success insert name : morpheus': (response )=> response.body.includes('morpheus'),
-        'verify success insert job  : leader': (response) => response.body.includes('leader'),
-       },
-    );
-    sleep(1);
-
-    // method put
-    const updateData = {        
-        "name": "Alexander",
-        "job": "zion resident"    
-    };
-    const responseUpdate = http.put('https://reqres.in/api/users/2', JSON.stringify(updateData), {
-        headers: {
+  sleep(1);
+  
+    group('Update with valid request should success', function () {
+      const FULL_URL = BASE_URL + '/api/users/2';
+      const payload = JSON.stringify({
+          name : name,
+          job: job
+        })
+        const params = {
+          headers: {
             'Content-Type': 'application/json',
-            'Accept'        : 'application/json',
-            }
+          },
+        };
+      
+      let res = http.put(FULL_URL, payload, params);
+    
+        check(res, {
+            'verify response status code must be 200': (res) => res.status == 200,
+        });
+        check(res, {
+          'verify response name = request': (res) => {
+              let response;
+              try {
+                  response = JSON.parse(res.body);
+              } catch (e) {
+                  console.error('Failed to parse response body:', e);
+                  return false;
+              }
+    
+              if (response && response.name) {
+                  return response.name === name;
+              } else {
+                  console.error('Response or response name is undefined');
+                  return false;
+              }
+          },
+        });
+        check(res, {
+          'verify response job = request': (res) => {
+              let response;
+              try {
+                  response = JSON.parse(res.body);
+              } catch (e) {
+                  console.error('Failed to parse response body:', e);
+                  return false;
+              }
+    
+              if (response && response.job) {
+                  return response.job === job;
+              } else {
+                  console.error('Response or response job is undefined');
+                  return false;
+              }
+          },
+        });
     });
-    const response2 = check(responseUpdate, {
-     'Response status must be 200': (responseUpdate) => responseUpdate.status == 200,
-     'verify success update name : Alexander' : (responseUpdate) => responseUpdate.body.includes('Alexander'),
-     'verify success update job  : zion resident': (responseUpdate) => responseUpdate.body.includes('zion resident'),
-    });
-    sleep(1); 
-}
+  };

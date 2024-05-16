@@ -7,19 +7,19 @@ export const options = {
     vus: 1000,
     iterations: 3500,
     thresholds: {
-        http_req_duration: ['avg<2000'], //Durasi Response API maximum 2S
-        http_req_failed: ['rate<0.01'], //http error harus dibawah 1%
+        http_req_duration: ['avg < 2000'], //reponse API max 2s
+        http_req_failed: ['rate < 0.1'],
     },
 };
 
 export default function () {
-  const name = 'morpheus';
-  const job = 'zion resident';
+  const name = 'morpheus'
+  const job = 'zion resident'
   group('API Create', function () {
     const FULL_URL = BASE_URL + '/api/users';
     const payload = JSON.stringify({
         name : name,
-        job: job,
+        job: job
       })
       const params = {
         headers: {
@@ -30,7 +30,7 @@ export default function () {
  let res = http.post(FULL_URL, payload, params);
     
     check(res, {
-        'verify response status code must be 201': (res) => res.status == 201,
+        'response code was 201': (res) => res.status == 201,
     });
     check(res, {
       'response name = request': (res) => {
@@ -51,7 +51,7 @@ export default function () {
       },
     });
     check(res, {
-      'Verify response job = request': (res) => {
+      'response job should match request': (res) => {
           let response;
           try {
               response = JSON.parse(res.body);
@@ -86,10 +86,10 @@ sleep(1);
  let res = http.put(FULL_URL, payload, params);
     
     check(res, {
-        'verify response status code must be 200': (res) => res.status == 200,
+        'response code was 201': (res) => res.status == 200,
     });
     check(res, {
-      'verify response name = request': (res) => {
+      'response name = request': (res) => {
           let response;
           try {
               response = JSON.parse(res.body);
@@ -107,7 +107,7 @@ sleep(1);
       },
     });
     check(res, {
-      'verify response job = request': (res) => {
+      'response job should match request': (res) => {
           let response;
           try {
               response = JSON.parse(res.body);
@@ -126,10 +126,10 @@ sleep(1);
     });
   });
   sleep(1);
-};
+}
 
 export function handleSummary(data) {
   return {
-    "testreport3.html": htmlReport(data),
+    "testreport2.html": htmlReport(data),
   };
 };

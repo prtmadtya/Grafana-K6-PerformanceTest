@@ -1,12 +1,11 @@
 {
   "name": "grafana-k6",
   "version": "1.0.0",
-  "description": "",
+  "description": "Performance Testing Using Grafana K6",
   "main": "Coba.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Aditya Pratama",
-  "license": "ISC",
-  "type": "module",
+  "license": "ISC"
 }
